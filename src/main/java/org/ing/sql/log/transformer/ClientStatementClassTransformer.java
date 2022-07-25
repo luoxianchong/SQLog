@@ -23,7 +23,14 @@ public class ClientStatementClassTransformer extends StatementClassTransformer {
             "            } catch (Exception e) {\n" +
             "                e.printStackTrace();\n" +
             "            }\n" +
-            "        }";
+            "        }" +
+            "if(r instanceof com.mysql.cj.jdbc.ResultSetInternalMethods ) {\n" +
+            "            try {\n" +
+            "                effect=((com.mysql.cj.jdbc.ResultSetInternalMethods) r).getUpdateCount();\n" +
+            "            } catch (Exception e) {\n" +
+            "                e.printStackTrace();\n" +
+            "            }\n" +
+            "        }";;
 
     static final String codeSource ="{" +
             "long s=System.currentTimeMillis();" +
