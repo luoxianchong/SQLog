@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
+import java.util.function.Function;
 
 /**
  *  字节码transformer
@@ -59,7 +60,7 @@ public class StatementClassTransformer implements ClassFileTransformer {
             "}\n" +
             "}";
 
-    protected final static ClassPool pool = ClassPool.getDefault();
+    protected static final ClassPool pool = ClassPool.getDefault();
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
@@ -71,7 +72,7 @@ public class StatementClassTransformer implements ClassFileTransformer {
                 CtClass ctClass = pool.get(className);
                 for (CtMethod m : ctClass.getDeclaredMethods()) {
                     if (m.getName().equals("executeInternal")) {
-                        newMethod(m);
+                        newMethod(m,this::genCodeSource);
                     }
                 }
                 return ctClass.toBytecode();
@@ -79,12 +80,14 @@ public class StatementClassTransformer implements ClassFileTransformer {
                 e.printStackTrace();
             }
         }
-        if("com.mysql.jdbc.StatementImpl".equals(className)){
+        if("com.mysql.jdbc.StatementImpl".equals(className)
+                ||"com.mysql.cj.jdbc.StatementImpl".equals(className)
+        ){
             try {
                 CtClass ctClass = pool.get(className);
                 for (CtMethod m : ctClass.getDeclaredMethods()) {
                     if (m.getName().equals("executeQuery")) {
-                        newMethod(m);
+                        newMethod(m,this::buildQueryAdvice);
                     }
                 }
                 return ctClass.toBytecode();
@@ -96,19 +99,23 @@ public class StatementClassTransformer implements ClassFileTransformer {
         return null;
     }
 
-    protected CtMethod newMethod(CtMethod m) throws CannotCompileException, NotFoundException {
+    protected CtMethod newMethod(CtMethod m, Function<Boolean,String> function) throws CannotCompileException, NotFoundException {
         CtMethod copy = CtNewMethod.copy(m, m.getDeclaringClass(), null);
         copy.setName(m.getName() + "$agent");
         m.getDeclaringClass().addMethod(copy);
         if (m.getReturnType().equals(CtClass.voidType)) {
-            m.setBody(String.format(genCodeSource(true), m.getName()));
+            m.setBody(String.format(function.apply(true), m.getName()));
         } else {
-            m.setBody(String.format(genCodeSource(false), m.getName()));
+            m.setBody(String.format(function.apply(false), m.getName()));
         }
         return copy;
     }
 
     public String genCodeSource(boolean returnVoid) {
+        return returnVoid?voidCodeSource:codeSource;
+    }
+
+    private String buildQueryAdvice(boolean returnVoid){
         return returnVoid?voidCodeSource:codeSource;
     }
 }
