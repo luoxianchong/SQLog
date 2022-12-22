@@ -15,11 +15,7 @@ package org.ing.sql.log.transformer;
 public class ClientStatementClassTransformer extends StatementClassTransformer {
     protected static String  clientReturnPrint="if(r instanceof com.mysql.cj.jdbc.result.ResultSetInternalMethods ) {\n" +
             "            try {\n" +
-            "                if(((com.mysql.cj.jdbc.result.ResultSetInternalMethods) r).hasRows()){\n" +
-            "                    effect=((com.mysql.cj.jdbc.result.ResultSetInternalMethods) r).getRows().size();\n" +
-            "                }else{\n" +
             "                    effect=((com.mysql.cj.jdbc.result.ResultSetInternalMethods) r).getUpdateCount();\n" +
-            "                } \n" +
             "            } catch (Exception e) {\n" +
             "                e.printStackTrace();\n" +
             "            }\n" +

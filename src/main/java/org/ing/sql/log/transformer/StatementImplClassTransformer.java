@@ -24,7 +24,7 @@ import java.security.ProtectionDomain;
  * @author ing
  * @since 2021/5/12
  */
-public class StatementClassTransformer implements ClassFileTransformer {
+public class StatementImplClassTransformer extends StatementClassTransformer  {
     protected static final String dateTimeFormat="String nowTime=new java.text.SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss.SSS\").format(new java.util.Date());\n";
 
     protected static String  returnPrint="if(r instanceof com.mysql.jdbc.ResultSetInternalMethods ) {\n" +
@@ -59,55 +59,7 @@ public class StatementClassTransformer implements ClassFileTransformer {
             "}\n" +
             "}";
 
-    protected final static ClassPool pool = ClassPool.getDefault();
-
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-        className = className.replace("/", ".");
-        if ("com.mysql.jdbc.PreparedStatement".equals(className)
-            || "com.mysql.cj.jdbc.ClientPreparedStatement".equals(className)
-        ) {
-            try {
-                CtClass ctClass = pool.get(className);
-                for (CtMethod m : ctClass.getDeclaredMethods()) {
-                    if (m.getName().equals("executeInternal")) {
-                        newMethod(m);
-                    }
-                }
-                return ctClass.toBytecode();
-            } catch (NotFoundException | CannotCompileException | IOException e) {
-                e.printStackTrace();
-            }
-        }
-        if("com.mysql.jdbc.StatementImpl".equals(className)){
-            try {
-                CtClass ctClass = pool.get(className);
-                for (CtMethod m : ctClass.getDeclaredMethods()) {
-                    if (m.getName().equals("executeQuery")) {
-                        newMethod(m);
-                    }
-                }
-                return ctClass.toBytecode();
-            } catch (NotFoundException | CannotCompileException | IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return null;
-    }
-
-    protected CtMethod newMethod(CtMethod m) throws CannotCompileException, NotFoundException {
-        CtMethod copy = CtNewMethod.copy(m, m.getDeclaringClass(), null);
-        copy.setName(m.getName() + "$agent");
-        m.getDeclaringClass().addMethod(copy);
-        if (m.getReturnType().equals(CtClass.voidType)) {
-            m.setBody(String.format(genCodeSource(true), m.getName()));
-        } else {
-            m.setBody(String.format(genCodeSource(false), m.getName()));
-        }
-        return copy;
-    }
-
     public String genCodeSource(boolean returnVoid) {
         return returnVoid?voidCodeSource:codeSource;
     }

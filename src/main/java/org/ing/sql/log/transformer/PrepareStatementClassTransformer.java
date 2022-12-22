@@ -14,7 +14,13 @@ package org.ing.sql.log.transformer;
  */
 public class PrepareStatementClassTransformer extends StatementClassTransformer {
 
-    protected static String returnPrint="if(r instanceof java.sql.ResultSet){\n try { effect = ((java.sql.ResultSet) r).getFetchSize(); }catch (Exception e){ e.printStackTrace(); }\n  }";
+    protected static String  returnPrint="if(r instanceof com.mysql.jdbc.ResultSetInternalMethods ) {\n" +
+                                               "            try {\n" +
+                                               "                    effect=((com.mysql.jdbc.ResultSetInternalMethods) r).getUpdateCount();\n" +
+                                               "            } catch (Exception e) {\n" +
+                                               "                e.printStackTrace();\n" +
+                                               "            }\n" +
+                                               "        }";
 
     static final String codeSource ="{" +
             "long s=System.currentTimeMillis();" +
