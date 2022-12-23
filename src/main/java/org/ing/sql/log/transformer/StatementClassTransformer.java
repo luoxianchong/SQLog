@@ -25,7 +25,7 @@ import java.util.function.Function;
  * @author ing
  * @since 2021/5/12
  */
-public class StatementClassTransformer implements ClassFileTransformer {
+public abstract class StatementClassTransformer implements ClassFileTransformer {
     protected static final String dateTimeFormat="String nowTime=new java.text.SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss.SSS\").format(new java.util.Date());\n";
 
     protected static String  returnPrint="if(r instanceof com.mysql.jdbc.ResultSetInternalMethods ) {\n" +
@@ -111,9 +111,7 @@ public class StatementClassTransformer implements ClassFileTransformer {
         return copy;
     }
 
-    public String genCodeSource(boolean returnVoid) {
-        return returnVoid?voidCodeSource:codeSource;
-    }
+    public abstract String genCodeSource(boolean returnVoid) ;
 
     private String buildQueryAdvice(boolean returnVoid){
         return returnVoid?voidCodeSource:codeSource;
