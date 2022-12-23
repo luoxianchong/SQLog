@@ -71,7 +71,7 @@ public class StatementClassTransformer implements ClassFileTransformer {
             try {
                 CtClass ctClass = pool.get(className);
                 for (CtMethod m : ctClass.getDeclaredMethods()) {
-                    if (m.getName().equals("executeInternal")) {
+                    if ("executeInternal".equals(m.getName())) {
                         newMethod(m,this::genCodeSource);
                     }
                 }
@@ -86,7 +86,7 @@ public class StatementClassTransformer implements ClassFileTransformer {
             try {
                 CtClass ctClass = pool.get(className);
                 for (CtMethod m : ctClass.getDeclaredMethods()) {
-                    if (m.getName().equals("executeQuery")) {
+                    if ("executeQuery".equals(m.getName())) {
                         newMethod(m,this::buildQueryAdvice);
                     }
                 }

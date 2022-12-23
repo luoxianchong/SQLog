@@ -13,7 +13,7 @@ package org.ing.sql.log.transformer;
  * @since 2021/5/12
  */
 public class ClientStatementClassTransformer extends StatementClassTransformer {
-    protected static String  clientReturnPrint="if(r instanceof com.mysql.cj.jdbc.result.ResultSetInternalMethods ) {\n" +
+    protected static String  returnPrint="if(r instanceof com.mysql.cj.jdbc.result.ResultSetInternalMethods ) {\n" +
             "            try {\n" +
             "                    effect=((com.mysql.cj.jdbc.result.ResultSetInternalMethods) r).getUpdateCount();\n" +
             "            } catch (Exception e) {\n" +
@@ -29,7 +29,7 @@ public class ClientStatementClassTransformer extends StatementClassTransformer {
             "r=($w)%s$agent($$);\n" +
             "}finally{\n" +
             dateTimeFormat+
-            clientReturnPrint+
+            returnPrint+
             "System.out.println(nowTime+\"-elapse:[\"+(System.currentTimeMillis()-s)+\"ms]-sql:[\"+$0.asSql()+\"]-effect rows:[\"+effect+\"]\");\n" +
             "}\n" +
             "return ($r)r;" +
