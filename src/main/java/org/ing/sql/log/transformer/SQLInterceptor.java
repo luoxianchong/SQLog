@@ -53,16 +53,14 @@ public class SQLInterceptor {
     }
 
     private static Method readMethod(Class<?> clazz, String methodName) {
+        Method method=null;
         try {
-            Method[] methods = clazz.getMethods();
-            for (Method method : methods) {
-                if (methodName.equals(method.getName()) && method.getParameterCount() == 0) {
-                    return method;
-                }
-            }
+            method = clazz.getDeclaredMethod(methodName, null);
+            method.setAccessible(true);
+            return method;
         } catch (Exception ignored) {
         }
-        return null;
+        return Objects.nonNull(clazz.getSuperclass())? readMethod(clazz.getSuperclass(), methodName) : method;
     }
 
     private static String readResult(ResultSet rs) {
@@ -70,20 +68,22 @@ public class SQLInterceptor {
 
         if (Objects.nonNull(rs)) {
             try {
-                final ResultSetMetaData metaData = rs.getMetaData();
-                int columnCount = metaData.getColumnCount();
-                while (rs.next()) {
-                    Map<String, Object> map = new HashMap<>();
-                    for (int i = 0; i < columnCount; i++) {
-                        map.put(metaData.getColumnName(i + 1), rs.getObject(i + 1));
-                    }
-                    list.add(map);
-                }
-
                 Method method = readMethod(rs.getClass(), "prev");
-                while (Boolean.TRUE.equals(method.invoke(rs))){
+                if (Objects.nonNull(method)) {
+                    final ResultSetMetaData metaData = rs.getMetaData();
+                    int columnCount = metaData.getColumnCount();
+                    while (rs.next()) {
+                        Map<String, Object> map = new HashMap<>();
+                        for (int i = 0; i < columnCount; i++) {
+                            map.put(metaData.getColumnName(i + 1), rs.getObject(i + 1));
+                        }
+                        list.add(map);
+                    }
 
+                    while (Boolean.TRUE.equals(method.invoke(rs))) {
+                    }
                 }
+
                 return list.toString().substring(0, 4096);
             } catch (Exception ignored) {
             }
