@@ -38,18 +38,23 @@ public class SQLInterceptor {
 
         long start = System.currentTimeMillis();
         ResultSet resultSet = null;
-        long effect = -1L;
+        int effect = -1;
         try {
             // 调用目标方法
             resultSet = caller.call();
         } finally {
+            List<Map<String, Object>> list = new ArrayList<>();
             if (resultSet != null) {
-                Method updateCount = readMethod(resultSet.getClass(), "getUpdateCount");
-                effect = Objects.nonNull(updateCount) ? (Long) updateCount.invoke(resultSet) : -1L;
+                list.addAll(readResult(resultSet));
+                effect = list.isEmpty()?-1:list.size();
             }
-            System.out.println(nowTime + "-elapse:[" + (System.currentTimeMillis() - start) + "ms]-sql：[" + sql + "]-effect rows：[" + effect + "]-result：" + readResult(resultSet));
+            System.out.println(nowTime + "-elapse:[" + (System.currentTimeMillis() - start) + "ms]-sql：[" + sql + "]-effect rows：[" + effect + "]-result：" + sub4096(list.toString()));
         }
         return resultSet;
+    }
+
+    private static String sub4096(String src){
+        return src.length()>4096?src.substring(0,4096):src;
     }
 
     private static Method readMethod(Class<?> clazz, String methodName) {
@@ -63,7 +68,7 @@ public class SQLInterceptor {
         return Objects.nonNull(clazz.getSuperclass())? readMethod(clazz.getSuperclass(), methodName) : method;
     }
 
-    private static String readResult(ResultSet rs) {
+    private static List<Map<String, Object>> readResult(ResultSet rs) {
         List<Map<String, Object>> list = new ArrayList<>();
 
         if (Objects.nonNull(rs)) {
@@ -84,11 +89,11 @@ public class SQLInterceptor {
                     }
                 }
 
-                return list.toString().substring(0, 4096);
+                return list;
             } catch (Exception ignored) {
             }
         }
-        return list.toString();
+        return list;
     }
 
 }
