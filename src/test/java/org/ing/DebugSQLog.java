@@ -24,9 +24,9 @@ import java.util.Map;
 public class DebugSQLog {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        Connection connection = DriverManager.getConnection("jdbc:mysql://115.159.101.229:6340/imall?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai",
+        Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/imall?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai",
                 "root",
-                "zxcv");
+                "1234");
         PreparedStatement preparedStatement = connection.prepareStatement("select * from user ");
         ResultSet resultSet = preparedStatement.executeQuery();
 
