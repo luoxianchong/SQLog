@@ -8,7 +8,11 @@ package org.ing.sql.log;
 
 import java.lang.instrument.Instrumentation;
 
-import org.ing.sql.log.transformer.ClasssTransformerFactory;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.agent.builder.AgentBuilder;
+import net.bytebuddy.dynamic.scaffold.TypeValidation;
+import org.ing.sql.log.transformer.ByteBuddyTransformer;
+import  net.bytebuddy.matcher.ElementMatchers;
 
 /**
  * sql 日志 agent
@@ -19,11 +23,26 @@ import org.ing.sql.log.transformer.ClasssTransformerFactory;
 public class SQLAgent {
 
     public static void premain(String arg, Instrumentation instrumentation) {
-        instrumentation.addTransformer(ClasssTransformerFactory.getTransformer());
+        System.out.println("===========> premain--SQLLogAgent <===============");
+        byteProxy().installOn(instrumentation);
     }
 
+
     public static void agentmain(String arg, Instrumentation instrumentation) {
-        instrumentation.addTransformer(ClasssTransformerFactory.getTransformer());
+        System.out.println("===========> agentmain--SQLLogAgent <===============");
+        byteProxy().installOn(instrumentation);
+    }
+
+    private static AgentBuilder byteProxy(){
+        ByteBuddyTransformer transformer = new ByteBuddyTransformer();
+        final ByteBuddy byteBuddy = new ByteBuddy().with(TypeValidation.of(false));
+       return new AgentBuilder.Default(byteBuddy)
+                .type(ElementMatchers.namedOneOf("com.mysql.jdbc.PreparedStatement","com.mysql.jdbc.StatementImpl",
+                        "com.mysql.cj.jdbc.ClientPreparedStatement","com.mysql.cj.jdbc.StatementImpl"))
+                //.with((AgentBuilder.Listener) transformer)
+                // update the byte code
+                .transform(transformer);
+
     }
 }
 
