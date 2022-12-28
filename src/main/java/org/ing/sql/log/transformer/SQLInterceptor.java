@@ -48,13 +48,13 @@ public class SQLInterceptor {
                 list.addAll(readResult(resultSet));
                 effect = list.isEmpty()?-1:list.size();
             }
-            System.out.println(nowTime + "-elapse:[" + (System.currentTimeMillis() - start) + "ms]-sql：[" + sql + "]-effect rows：[" + effect + "]-result：" + sub4096(list.toString()));
+            System.out.println(nowTime + "-elapse:[" + (System.currentTimeMillis() - start) + "ms]-sql：[" + sql + "]-effect rows：[" + effect + "]-result：" + sub40960(list.toString()));
         }
         return resultSet;
     }
 
-    private static String sub4096(String src){
-        return src.length()>4096?src.substring(0,4096):src;
+    private static String sub40960(String src){
+        return src.length()>40960?src.substring(0,40960):src;
     }
 
     private static Method readMethod(Class<?> clazz, String methodName) {
