@@ -23,13 +23,13 @@ import  net.bytebuddy.matcher.ElementMatchers;
 public class SQLAgent {
 
     public static void premain(String arg, Instrumentation instrumentation) {
-        System.out.println("===========> premain--SQLLogAgent <===============");
+        System.out.println("===========================> premain--SQLogAgent <===============================");
         byteProxy().installOn(instrumentation);
     }
 
 
     public static void agentmain(String arg, Instrumentation instrumentation) {
-        System.out.println("===========> agentmain--SQLLogAgent <===============");
+        System.out.println("===========================> agentmain--SQLogAgent <===============================");
         byteProxy().installOn(instrumentation);
     }
 
