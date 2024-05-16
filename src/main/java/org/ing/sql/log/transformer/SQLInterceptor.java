@@ -48,8 +48,11 @@ public class SQLInterceptor {
                 list.addAll(readResult(resultSet));
                 effect = list.isEmpty()?-1:list.size();
             }
-            System.out.println(nowTime + "-elapse:[" + (System.currentTimeMillis() - start) + "ms]-sql：[" + sql + "]-effect rows：[" + effect + "]-result：" + sub40960(list.toString()));
-            log.info(nowTime + "-elapse:[" + (System.currentTimeMillis() - start) + "ms]-sql：[" + sql + "]-effect rows：[" + effect + "]-result：" + sub40960(list.toString()));
+            if(log.isInfoEnabled()){
+                System.out.println(nowTime + "-elapse:[" + (System.currentTimeMillis() - start) + "ms]-sql：[" + sql + "]-effect rows：[" + effect + "]-result：" + sub40960(list.toString()));
+            }else{
+                log.info(nowTime + "-elapse:[" + (System.currentTimeMillis() - start) + "ms]-sql：[" + sql + "]-effect rows：[" + effect + "]-result：" + sub40960(list.toString()));
+            }
         }
         return resultSet;
     }
