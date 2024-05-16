@@ -34,7 +34,7 @@ public class SQLInterceptor {
     ) throws Exception {
         String nowTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
         Method asSql = readMethod(obj.getClass(), "asSql");
-        Object sql = Objects.nonNull(asSql) ? asSql.invoke(obj) : args[0];
+        String sql=Objects.toString(Objects.nonNull(asSql) ? asSql.invoke(obj) : args[0]).replace("\\s+"," ");
 
         long start = System.currentTimeMillis();
         ResultSet resultSet = null;
@@ -49,6 +49,7 @@ public class SQLInterceptor {
                 effect = list.isEmpty()?-1:list.size();
             }
             System.out.println(nowTime + "-elapse:[" + (System.currentTimeMillis() - start) + "ms]-sql：[" + sql + "]-effect rows：[" + effect + "]-result：" + sub40960(list.toString()));
+            log.info(nowTime + "-elapse:[" + (System.currentTimeMillis() - start) + "ms]-sql：[" + sql + "]-effect rows：[" + effect + "]-result：" + sub40960(list.toString()));
         }
         return resultSet;
     }
