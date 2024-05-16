@@ -34,7 +34,7 @@ public class SQLInterceptor {
     ) throws Exception {
         String nowTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
         Method asSql = readMethod(obj.getClass(), "asSql");
-        String sql=Objects.toString(Objects.nonNull(asSql) ? asSql.invoke(obj) : args[0]).replace("\\s+"," ");
+        String sql=Objects.toString(Objects.nonNull(asSql) ? asSql.invoke(obj) : args[0]).replaceAll("\\s+"," ");
 
         long start = System.currentTimeMillis();
         ResultSet resultSet = null;
