@@ -49,9 +49,9 @@ public class SQLInterceptor {
                 effect = list.isEmpty()?-1:list.size();
             }
             if(log.isInfoEnabled()){
-                System.out.println(nowTime + "-elapse:[" + (System.currentTimeMillis() - start) + "ms]-sql：[" + sql + "]-effect rows：[" + effect + "]-result：" + sub40960(list.toString()));
-            }else{
                 log.info(nowTime + "-elapse:[" + (System.currentTimeMillis() - start) + "ms]-sql：[" + sql + "]-effect rows：[" + effect + "]-result：" + sub40960(list.toString()));
+            }else{
+                System.out.println(nowTime + "-elapse:[" + (System.currentTimeMillis() - start) + "ms]-sql：[" + sql + "]-effect rows：[" + effect + "]-result：" + sub40960(list.toString()));
             }
         }
         return resultSet;
