@@ -36,6 +36,7 @@ public class ByteBuddyTransformer implements AgentBuilder.Transformer,AgentBuild
     public void onDiscovery(String typeName, ClassLoader cl, JavaModule module, boolean b) {
         if (typeName.startsWith("com.mysql.jdbc")) {
             System.out.println("--- onDiscovery ---" + typeName);
+            log.info("--- onDiscovery ---" + typeName);
         }
     }
 
@@ -43,6 +44,7 @@ public class ByteBuddyTransformer implements AgentBuilder.Transformer,AgentBuild
     public void onTransformation(TypeDescription typeDescription, ClassLoader classLoader, JavaModule javaModule, boolean b, DynamicType dynamicType) {
         if (typeDescription.getSimpleName().startsWith("com.mysql.jdbc")) {
             System.out.println("--- onTransformation ---" + typeDescription.getSimpleName());
+            log.info("--- onTransformation ---" + typeDescription.getSimpleName());
         }
     }
 
@@ -62,6 +64,7 @@ public class ByteBuddyTransformer implements AgentBuilder.Transformer,AgentBuild
     public void onComplete(String typeName, ClassLoader classLoader, JavaModule javaModule, boolean b) {
         if (typeName.startsWith("com.mysql.jdbc")) {
             System.out.println("--- onComplete ---" + typeName);
+            log.info("--- onComplete ---" + typeName);
         }
     }
 
