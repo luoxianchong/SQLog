@@ -34,7 +34,7 @@ public class ByteBuddyTransformer implements AgentBuilder.Transformer,AgentBuild
 
     @Override
     public void onDiscovery(String typeName, ClassLoader cl, JavaModule module, boolean b) {
-        if (typeName.startsWith("com.mysql.jdbc")) {
+        if (typeName.startsWith("com.mysql")) {
             System.out.println("--- onDiscovery ---" + typeName);
             log.info("--- onDiscovery ---" + typeName);
         }
@@ -42,7 +42,7 @@ public class ByteBuddyTransformer implements AgentBuilder.Transformer,AgentBuild
 
     @Override
     public void onTransformation(TypeDescription typeDescription, ClassLoader classLoader, JavaModule javaModule, boolean b, DynamicType dynamicType) {
-        if (typeDescription.getSimpleName().startsWith("com.mysql.jdbc")) {
+        if (typeDescription.getSimpleName().startsWith("com.mysql")) {
             System.out.println("--- onTransformation ---" + typeDescription.getSimpleName());
             log.info("--- onTransformation ---" + typeDescription.getSimpleName());
         }
@@ -55,14 +55,14 @@ public class ByteBuddyTransformer implements AgentBuilder.Transformer,AgentBuild
 
     @Override
     public void onError(String typeName, ClassLoader classLoader, JavaModule javaModule, boolean b, Throwable throwable) {
-        if (typeName.startsWith("com.mysql.jdbc")) {
+        if (typeName.startsWith("com.mysql")) {
             System.out.println("--- onError ---" + throwable);
         }
     }
 
     @Override
     public void onComplete(String typeName, ClassLoader classLoader, JavaModule javaModule, boolean b) {
-        if (typeName.startsWith("com.mysql.jdbc")) {
+        if (typeName.startsWith("com.mysql")) {
             System.out.println("--- onComplete ---" + typeName);
             log.info("--- onComplete ---" + typeName);
         }
