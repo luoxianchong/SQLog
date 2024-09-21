@@ -9,6 +9,8 @@ import net.bytebuddy.utility.JavaModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.security.ProtectionDomain;
+
 /**
  * @author zhongming
  * @since 2022/12/23
@@ -17,9 +19,8 @@ public class ByteBuddyTransformer implements AgentBuilder.Transformer,AgentBuild
 
     private static final Logger log = LoggerFactory.getLogger(ByteBuddyTransformer.class);
 
-
     @Override
-    public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDesc, ClassLoader cl, JavaModule module) {
+    public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDesc, ClassLoader cl, JavaModule module,ProtectionDomain domain) {
         if ( "PreparedStatement".equals(typeDesc.getSimpleName())||"ClientPreparedStatement".equals(typeDesc.getSimpleName())) {
             // 委托
             return builder.method(ElementMatchers.named("executeInternal").and(ElementMatchers.isProtected()))
@@ -67,8 +68,6 @@ public class ByteBuddyTransformer implements AgentBuilder.Transformer,AgentBuild
             log.info("--- onComplete ---" + typeName);
         }
     }
-
-
 
 
 }
